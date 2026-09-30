@@ -1,0 +1,24 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>Registration Successful</title>
+<link rel="stylesheet" href="style.css"></head><body>
+<nav><a href="index.html">Register</a><a href="student-login.html">Student Login</a><a href="registered.html">Registered Students</a></nav>
+<div class="wrap"><div class="card">
+<div class="ok">&#10004; You have successfully registered!</div>
+<div class="row"><span>Name</span><b id="name"></b></div>
+<div class="row"><span>Registration Number</span><b id="regNo"></b></div>
+<div class="row"><span>Password</span><b id="pw"></b></div>
+<div class="row"><span>Registered Time</span><b id="time"></b></div>
+<div class="row"><span>Status</span><b>Pending approval</b></div>
+<p class="note">A confirmation email has been sent to your inbox. Save your Registration Number and Password now &mdash; they are shown here only once.</p>
+<a class="btn" href="student-login.html">Go to Student Login</a>
+</div></div>
+<script>
+const d=JSON.parse(sessionStorage.getItem('reg')||'null');
+if(!d)location.href='index.html';
+else{
+  document.getElementById('name').textContent=d.name;
+  document.getElementById('regNo').textContent=d.regNo;
+  document.getElementById('pw').textContent=d.password;
+  document.getElementById('time').textContent=new Date(d.registeredAt).toLocaleString('en-IN',{timeZone:'Asia/Kolkata',dateStyle:'medium',timeStyle:'medium'});
+}
+</script></body></html>

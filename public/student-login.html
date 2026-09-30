@@ -1,0 +1,30 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>Student Login</title>
+<link rel="stylesheet" href="style.css"></head><body>
+<nav><a href="index.html">Register</a><a href="student-login.html">Student Login</a><a href="registered.html">Registered Students</a></nav>
+<div class="wrap"><h1>Student Login</h1>
+<div class="card">
+<div class="banner" id="banner"></div>
+<form id="f">
+<div class="field"><label>Registration Number</label><input id="regNo" placeholder="REG2026123456" autocomplete="username"></div>
+<div class="field"><label>Password</label><input id="password" type="password" autocomplete="current-password"></div>
+<button class="btn" id="btn">Login</button>
+</form>
+<a class="link" href="forgot-password.html">Forgot Password?</a>
+</div></div>
+<script>
+const $=id=>document.getElementById(id);
+$('f').addEventListener('submit',async e=>{
+  e.preventDefault();
+  $('banner').classList.remove('show');
+  if(!$('regNo').value.trim()||!$('password').value){$('banner').textContent='Enter Registration Number and Password.';$('banner').classList.add('show');return;}
+  $('btn').disabled=true;$('btn').textContent='Logging in...';
+  try{
+    const r=await fetch('/api/student/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({regNo:$('regNo').value.trim(),password:$('password').value})});
+    const d=await r.json();
+    if(r.ok){location.href='student-dashboard.html';return;}
+    $('banner').textContent=d.error;$('banner').classList.add('show');
+  }catch(_){$('banner').textContent='Cannot reach server.';$('banner').classList.add('show');}
+  $('btn').disabled=false;$('btn').textContent='Login';
+});
+</script></body></html>

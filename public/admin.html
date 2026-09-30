@@ -1,0 +1,54 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>Admin Dashboard</title>
+<link rel="stylesheet" href="style.css"></head><body>
+<nav><span class="navtxt">Admin Dashboard</span><a href="#" id="logout">Logout</a></nav>
+<div class="wrap huge"><h1>All Registrations</h1>
+<div class="stats" id="stats"></div>
+<div class="tools">
+  <input id="q" placeholder="Search name, reg no, email, mobile, place...">
+  <select id="flt"><option value="">All</option><option>Pending</option><option>Approved</option><option>Rejected</option></select>
+</div>
+<div class="card scroll"><table>
+<thead><tr><th>#</th><th>Name</th><th>Reg No</th><th>DOB</th><th>Father</th><th>Mother</th><th>Student Mob</th><th>Parent Mob</th><th>Place</th><th>Email</th><th>Registered</th><th>Status</th><th>Action</th></tr></thead>
+<tbody id="rows"></tbody></table></div></div>
+<script>
+const $=id=>document.getElementById(id);
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmt=iso=>new Date(iso).toLocaleString('en-IN',{timeZone:'Asia/Kolkata',dateStyle:'medium',timeStyle:'short'});
+let all=[];
+
+async function load(){
+  const r=await fetch('/api/admin/registrations');
+  if(r.status===401){location.href='admin-login.html';return;}
+  all=await r.json();render();
+}
+function render(){
+  const q=$('q').value.toLowerCase(), f=$('flt').value;
+  const c=s=>all.filter(x=>x.status===s).length;
+  $('stats').innerHTML='Total: <b>'+all.length+'</b> &nbsp;|&nbsp; Pending: <b>'+c('Pending')+'</b> &nbsp;|&nbsp; Approved: <b>'+c('Approved')+'</b> &nbsp;|&nbsp; Rejected: <b>'+c('Rejected')+'</b>';
+  const list=all.filter(x=>(!f||x.status===f)&&(!q||[x.full_name,x.reg_no,x.email,x.current_place,x.student_mobile,x.parent_mobile].join(' ').toLowerCase().includes(q)));
+  $('rows').innerHTML=list.length?list.map((s,i)=>
+    '<tr><td>'+(i+1)+'</td><td>'+esc(s.full_name)+'</td><td>'+esc(s.reg_no)+'</td><td>'+esc(String(s.dob).slice(0,10))+
+    '</td><td>'+esc(s.father_name)+'</td><td>'+esc(s.mother_name)+'</td><td>'+esc(s.student_mobile)+'</td><td>'+esc(s.parent_mobile)+
+    '</td><td>'+esc(s.current_place)+'</td><td>'+esc(s.email)+'</td><td>'+fmt(s.registered_at)+
+    '</td><td><span class="badge '+s.status+'">'+s.status+'</span>'+(s.reject_reason?'<div class="rs">'+esc(s.reject_reason)+'</div>':'')+
+    '</td><td class="act"><button class="btn-sm ok" onclick="setStatus('+s.id+',\'Approved\')">Approve</button> '+
+    '<button class="btn-sm no" onclick="setStatus('+s.id+',\'Rejected\')">Reject</button></td></tr>').join('')
+    :'<tr><td colspan="13">No records.</td></tr>';
+}
+async function setStatus(id,status){
+  let reason='';
+  if(status==='Rejected'){reason=prompt('Reason for rejection:');if(!reason||!reason.trim())return;}
+  else if(!confirm('Approve this student? An email will be sent to them.'))return;
+  const r=await fetch('/api/admin/status',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id,status,reason})});
+  if(r.ok)load();else alert((await r.json()).error||'Failed');
+}
+$('q').addEventListener('input',render);
+$('flt').addEventListener('change',render);
+$('logout').addEventListener('click',async e=>{
+  e.preventDefault();
+  await fetch('/api/admin/logout',{method:'POST'});
+  location.href='admin-login.html';
+});
+load();
+</script></body></html>

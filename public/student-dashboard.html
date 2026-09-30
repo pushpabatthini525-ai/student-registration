@@ -1,0 +1,29 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>My Registration</title>
+<link rel="stylesheet" href="style.css"></head><body>
+<nav><span class="navtxt">My Registration</span><a href="#" id="logout">Logout</a></nav>
+<div class="wrap"><div class="card" id="card">Loading...</div></div>
+<script>
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmt=iso=>new Date(iso).toLocaleString('en-IN',{timeZone:'Asia/Kolkata',dateStyle:'medium',timeStyle:'short'});
+
+fetch('/api/student/me').then(async r=>{
+  if(r.status===401){location.href='student-login.html';return;}
+  const d=await r.json();
+  document.getElementById('card').innerHTML=
+    '<div class="status-hero"><div style="font-size:1.1rem;font-weight:700">'+esc(d.full_name)+'</div>'+
+    '<span class="badge '+d.status+'">'+d.status+'</span>'+
+    (d.status==='Rejected'&&d.reject_reason?'<p class="rs" style="margin:10px auto 0;max-width:320px">Reason: '+esc(d.reject_reason)+'</p>':'')+
+    '</div>'+
+    '<div class="row"><span>Registration Number</span><b>'+esc(d.reg_no)+'</b></div>'+
+    '<div class="row"><span>Email</span><b>'+esc(d.email)+'</b></div>'+
+    '<div class="row"><span>Current Place</span><b>'+esc(d.current_place)+'</b></div>'+
+    '<div class="row"><span>Registered On</span><b>'+fmt(d.registered_at)+'</b></div>';
+}).catch(()=>{document.getElementById('card').textContent='Could not load your details.';});
+
+document.getElementById('logout').addEventListener('click',async e=>{
+  e.preventDefault();
+  await fetch('/api/student/logout',{method:'POST'});
+  location.href='student-login.html';
+});
+</script></body></html>

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Student Registration</title>
+<style>
+*{box-sizing:border-box;margin:0}
+:root{--g1:#0b2e26;--g2:#1f6f5c;--ink:#14213d;--muted:#6b7280;--line:#dfe3e8;--bad:#b3261e}
+body{min-height:100vh;display:grid;grid-template-columns:1fr 1.35fr;font-family:"Segoe UI",Roboto,Arial,sans-serif;color:var(--ink);background:#fff}
+.brand{position:sticky;top:0;height:100vh;overflow:hidden;color:#fff;padding:56px;display:flex;flex-direction:column;justify-content:space-between;background:linear-gradient(145deg,var(--g1),var(--g2))}
+.brand::before,.brand::after{content:"";position:absolute;border-radius:50%;border:1px solid #ffffff26}
+.brand::before{width:520px;height:520px;right:-180px;top:-160px;box-shadow:0 0 0 60px #ffffff0a,0 0 0 120px #ffffff06}
+.brand::after{width:340px;height:340px;left:-120px;bottom:-140px;box-shadow:0 0 0 50px #ffffff0a}
+.logo{display:flex;align-items:center;gap:12px;font-weight:700;letter-spacing:.4px;position:relative;z-index:1}
+.logo span{width:40px;height:40px;border-radius:10px;background:#ffffff22;display:grid;place-items:center;font-size:1.1rem}
+.hero{position:relative;z-index:1}
+.hero h1{font-family:Georgia,"Times New Roman",serif;font-size:2.4rem;line-height:1.2;margin-bottom:14px}
+.hero p{opacity:.8;max-width:380px;line-height:1.6}
+.pts{position:relative;z-index:1;display:grid;gap:12px;font-size:.92rem}
+.pts div{display:flex;align-items:center;gap:10px;opacity:.9}
+.pts b{width:22px;height:22px;border-radius:50%;background:#ffffff26;display:grid;place-items:center;font-size:.75rem}
+.panel{padding:26px 48px 50px;display:flex;flex-direction:column}
+.top{display:flex;justify-content:flex-end;gap:18px;margin-bottom:18px;font-size:.88rem;flex-wrap:wrap}
+.top a{color:var(--g2);text-decoration:none;font-weight:600}
+.top a:hover{text-decoration:underline}
+.box{width:100%;max-width:640px;margin:0 auto}
+.box h2{font-size:1.7rem;margin-bottom:6px}
+.sub{color:var(--muted);margin-bottom:24px;font-size:.95rem}
+.sec{display:flex;align-items:center;gap:10px;margin:26px 0 14px;font-size:.78rem;font-weight:700;letter-spacing:1.2px;color:var(--g2)}
+.sec::after{content:"";flex:1;height:1px;background:var(--line)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px 18px}
+.full{grid-column:1/-1}
+.f label{display:block;font-size:.78rem;font-weight:600;margin-bottom:6px;letter-spacing:.3px}
+.f label i{color:var(--bad);font-style:normal}
+.in{position:relative;display:flex}
+.in em{display:grid;place-items:center;padding:0 12px;border:1.5px solid var(--line);border-right:0;border-radius:10px 0 0 10px;background:#f1f3f5;font-style:normal;font-size:.9rem;color:var(--muted)}
+input{width:100%;padding:12px 14px;border:1.5px solid var(--line);border-radius:10px;font-size:.96rem;background:#fafbfc;transition:.15s;font-family:inherit;color:var(--ink)}
+.in em+input{border-radius:0 10px 10px 0}
+input:focus{outline:0;border-color:var(--g2);background:#fff;box-shadow:0 0 0 4px #1f6f5c1f}
+.err{display:none;color:var(--bad);font-size:.78rem;margin-top:5px}
+.f.invalid .err{display:block}
+.f.invalid input,.f.invalid em{border-color:var(--bad)}
+.banner{display:none;margin-bottom:8px;padding:11px 13px;border-radius:9px;background:#b3261e12;border:1px solid #b3261e55;color:var(--bad);font-size:.88rem}
+.banner.show{display:block}
+.go{width:100%;margin-top:28px;padding:14px;border:0;border-radius:10px;background:linear-gradient(135deg,var(--g2),var(--g1));color:#fff;font-size:1rem;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:.15s}
+.go:hover{transform:translateY(-1px);box-shadow:0 8px 20px #1f6f5c40}
+.go:disabled{opacity:.7;cursor:wait;transform:none;box-shadow:none}
+.spin{width:16px;height:16px;border:2px solid #fff6;border-top-color:#fff;border-radius:50%;animation:s .7s linear infinite;display:none}
+.go:disabled .spin{display:block}
+@keyframes s{to{transform:rotate(360deg)}}
+.note{text-align:center;color:var(--muted);font-size:.78rem;margin-top:16px}
+@media(max-width:900px){
+  body{grid-template-columns:1fr}
+  .brand{position:static;height:auto;padding:26px 24px;gap:14px}
+  .hero h1{font-size:1.5rem;margin-bottom:6px}
+  .hero p,.pts{display:none}
+  .panel{padding:20px 18px 40px}
+}
+@media(max-width:560px){.grid{grid-template-columns:1fr}}
+</style></head><body>
+
+<section class="brand">
+  <div class="logo"><span>&#127891;</span> Student Registration</div>
+  <div class="hero">
+    <h1>Start your journey with us</h1>
+    <p>Fill in your details once and get your registration number instantly. It takes less than two minutes.</p>
+  </div>
+  <div class="pts">
+    <div><b>&#10003;</b> Instant Registration Number and Password</div>
+    <div><b>&#10003;</b> One registration per email</div>
+    <div><b>&#10003;</b> Your details stay private</div>
+  </div>
+</section>
+
+<main class="panel">
+  <div class="top"><a href="student-login.html">Student Login</a><a href="registered.html">Registered Students</a><a href="admin-login.html">Admin Login</a></div>
+  <div class="box">
+    <h2>Create your registration</h2>
+    <p class="sub">Fields marked <span style="color:var(--bad)">*</span> are mandatory.</p>
+    <div class="banner" id="banner"></div>
+    <form id="form" novalidate>
+
+      <div class="sec">PERSONAL DETAILS</div>
+      <div class="grid">
+        <div class="f full"><label>FULL NAME <i>*</i></label><input id="fullName" placeholder="As per your records" autocomplete="name"><div class="err">Enter your full name.</div></div>
+        <div class="f"><label>DATE OF BIRTH <i>*</i></label><input id="dob" type="date"><div class="err">Select a valid date of birth.</div></div>
+        <div class="f"><label>CURRENT PLACE <i>*</i></label><input id="currentPlace" placeholder="Village / Town / City"><div class="err">Enter your current place.</div></div>
+      </div>
+
+      <div class="sec">FAMILY DETAILS</div>
+      <div class="grid">
+        <div class="f"><label>FATHER'S NAME <i>*</i></label><input id="fatherName" placeholder="Father's full name"><div class="err">Enter father's name.</div></div>
+        <div class="f"><label>MOTHER'S NAME <i>*</i></label><input id="motherName" placeholder="Mother's full name"><div class="err">Enter mother's name.</div></div>
+      </div>
+
+      <div class="sec">CONTACT DETAILS</div>
+      <div class="grid">
+        <div class="f"><label>STUDENT MOBILE <i>*</i></label><div class="in"><em>+91</em><input id="studentMobile" type="tel" maxlength="10" inputmode="numeric" placeholder="10-digit number"></div><div class="err">Enter a valid 10-digit mobile number.</div></div>
+        <div class="f"><label>PARENT MOBILE <i>*</i></label><div class="in"><em>+91</em><input id="parentMobile" type="tel" maxlength="10" inputmode="numeric" placeholder="10-digit number"></div><div class="err">Enter a valid 10-digit mobile number.</div></div>
+        <div class="f full"><label>EMAIL <i>*</i></label><input id="email" type="email" placeholder="you@example.com" autocomplete="email"><div class="err" id="emailErr">Enter a valid email address.</div></div>
+      </div>
+
+      <button class="go" id="btn"><span class="spin"></span><span id="lbl">Submit Registration</span></button>
+      <p class="note">A confirmation email will be sent to you. Your registration number and password are also shown once after submitting.</p>
+    </form>
+  </div>
+</main>
+
+<script>
+const $=id=>document.getElementById(id);
+const ids=['fullName','dob','fatherName','motherName','studentMobile','parentMobile','currentPlace','email'];
+const mob=v=>/^[6-9]\d{9}$/.test(v), mail=v=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+const rules={dob:v=>v&&new Date(v)<=new Date(),studentMobile:mob,parentMobile:mob,email:mail};
+const box=id=>$(id).closest('.f');
+
+$('dob').max=new Date().toISOString().split('T')[0];
+['studentMobile','parentMobile'].forEach(id=>$(id).addEventListener('input',e=>{e.target.value=e.target.value.replace(/\D/g,'');}));
+ids.forEach(id=>$(id).addEventListener('input',()=>box(id).classList.remove('invalid')));
+
+$('form').addEventListener('submit',async e=>{
+  e.preventDefault();
+  $('banner').classList.remove('show');
+  $('emailErr').textContent='Enter a valid email address.';
+  let ok=true;
+  ids.forEach(id=>{
+    const good=(rules[id]||(x=>x.length>1))($(id).value.trim());
+    box(id).classList.toggle('invalid',!good);
+    if(!good)ok=false;
+  });
+  if(!ok){const first=document.querySelector('.f.invalid');if(first)first.scrollIntoView({behavior:'smooth',block:'center'});return;}
+
+  const body={};ids.forEach(id=>body[id]=$(id).value.trim());
+  $('btn').disabled=true;$('lbl').textContent='Submitting...';
+  try{
+    const r=await fetch('/api/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    const d=await r.json();
+    if(!r.ok){
+      if(r.status===409){$('emailErr').textContent=d.error;box('email').classList.add('invalid');box('email').scrollIntoView({behavior:'smooth',block:'center'});}
+      else{$('banner').textContent=d.error;$('banner').classList.add('show');}
+      return;
+    }
+    sessionStorage.setItem('reg',JSON.stringify(d));
+    location.href='success.html';
+  }catch(_){$('banner').textContent='Cannot reach server. Please try again.';$('banner').classList.add('show');}
+  finally{$('btn').disabled=false;$('lbl').textContent='Submit Registration';}
+});
+</script>
+</body></html>

@@ -1,0 +1,18 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>Registered Students</title>
+<link rel="stylesheet" href="style.css"></head><body>
+<nav><a href="index.html">Register</a><a href="student-login.html">Student Login</a><a href="registered.html">Registered Students</a></nav>
+<div class="wrap wide"><h1>Registered Students</h1>
+<div class="count" id="count"></div>
+<div class="card scroll"><table>
+<thead><tr><th>#</th><th>Name</th><th>Registered Time</th></tr></thead>
+<tbody id="rows"><tr><td colspan="3">Loading...</td></tr></tbody></table></div></div>
+<script>
+fetch('/api/public-list').then(r=>r.json()).then(d=>{
+  document.getElementById('count').textContent='Total registered: '+d.total;
+  document.getElementById('rows').innerHTML=d.list.length?d.list.map((s,i)=>
+    '<tr><td>'+(i+1)+'</td><td>'+s.name.replace(/[<>&"]/g,'')+'</td><td>'+
+    new Date(s.registeredAt).toLocaleString('en-IN',{timeZone:'Asia/Kolkata',dateStyle:'medium',timeStyle:'medium'})+'</td></tr>').join('')
+    :'<tr><td colspan="3">No registrations yet.</td></tr>';
+}).catch(()=>document.getElementById('rows').innerHTML='<tr><td colspan="3">Could not load data.</td></tr>');
+</script></body></html>
