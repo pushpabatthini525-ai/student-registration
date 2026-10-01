@@ -80,19 +80,30 @@ async function verifyPassword(plain, stored) {
 }
 const hashPassword = (p) => bcrypt.hash(p, 10);
 
-// ---------- email ----------
-const mailReady = !!(process.env.EMAIL_USER && process.env.EMAIL_PASS);
-const mailer = mailReady
-  ? nodemailer.createTransport({
-      service: 'gmail',
-      auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
-    })
-  : null;
+// ---------- email ---------
+// ---------- email (via Resend API) ----------
+const mailReady = !!process.env.RESEND_API_KEY;
 
 async function sendMail(to, subject, html) {
-  if (!mailer) { console.log(`[email skipped - not configured] to=${to} subject="${subject}"`); return; }
+  if (!mailReady) { console.log(`[email skipped - not configured] to=${to} subject="${subject}"`); return; }
   try {
-    await mailer.sendMail({ from: `"Student Registration" <${process.env.EMAIL_USER}>`, to, subject, html });
+    const res = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        from: 'Student Registration <onboarding@resend.dev>',
+        to: [to],
+        subject,
+        html,
+      }),
+    });
+    if (!res.ok) {
+      const errText = await res.text();
+      console.error('Email send failed:', res.status, errText);
+    }
   } catch (e) {
     console.error('Email send failed:', e.message);
   }
