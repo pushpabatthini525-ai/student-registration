@@ -1,11 +1,28 @@
 <!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1"><title>Registration Successful</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎓</text></svg>">
 <link rel="stylesheet" href="style.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
 .qrbox{display:flex;justify-content:center;margin:18px 0}
 .qrbox canvas,.qrbox img{border:8px solid #fff;border-radius:8px;box-shadow:0 2px 10px rgba(0,0,0,.1)}
 .qrcap{text-align:center;font-size:.78rem;opacity:.65;margin-top:-10px;margin-bottom:14px}
+.actrow{display:flex;gap:10px;margin-top:14px}
+.actrow .btn{margin-top:0}
+.btn-outline{background:transparent;color:var(--accent);border:1.5px solid var(--accent)}
+
+#slip{display:none}
+@media print{
+  nav,.actrow,.note,.ok{display:none!important}
+  body *{visibility:hidden}
+  #slip,#slip *{visibility:visible}
+  #slip{display:block!important;position:absolute;top:0;left:0;width:100%;padding:20px}
+  .slip-card{border:2px solid #1f6f5c;border-radius:10px;padding:24px;max-width:500px;margin:0 auto}
+  .slip-head{text-align:center;border-bottom:2px solid #1f6f5c;padding-bottom:12px;margin-bottom:16px}
+  .slip-head h2{margin:0;color:#1f6f5c}
+  .slip-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px dashed #ccc;font-size:.92rem}
+  .slip-qr{display:flex;justify-content:center;margin:16px 0}
+}
 </style>
 </head><body>
 <nav><a href="home.html">Home</a><a href="index.html">Register</a><a href="student-login.html">Student Login</a><a href="registered.html">Registered Students</a></nav>
@@ -19,8 +36,23 @@
 <div class="row"><span>Registered Time</span><b id="time"></b></div>
 <div class="row"><span>Status</span><b>Pending approval</b></div>
 <p class="note">A confirmation email has been sent to your inbox. Save your Registration Number and Password now &mdash; they are shown here only once.</p>
-<a class="btn" href="student-login.html">Go to Student Login</a>
+<div class="actrow">
+  <button class="btn btn-outline" id="printBtn" style="flex:1">🖨 Print Slip</button>
+  <a class="btn" href="student-login.html" style="flex:1">Go to Student Login</a>
+</div>
 </div></div>
+
+<div id="slip">
+  <div class="slip-card">
+    <div class="slip-head"><h2>Registration Slip</h2><div>Student Registration Portal</div></div>
+    <div class="slip-qr" id="slipQr"></div>
+    <div class="slip-row"><span>Name</span><b id="slipName"></b></div>
+    <div class="slip-row"><span>Registration No</span><b id="slipRegNo"></b></div>
+    <div class="slip-row"><span>Registered On</span><b id="slipTime"></b></div>
+    <div class="slip-row"><span>Status</span><b>Pending approval</b></div>
+  </div>
+</div>
+
 <script>
 const d=JSON.parse(sessionStorage.getItem('reg')||'null');
 if(!d)location.href='index.html';
@@ -28,7 +60,15 @@ else{
   document.getElementById('name').textContent=d.name;
   document.getElementById('regNo').textContent=d.regNo;
   document.getElementById('pw').textContent=d.password;
-  document.getElementById('time').textContent=new Date(d.registeredAt).toLocaleString('en-IN',{timeZone:'Asia/Kolkata',dateStyle:'medium',timeStyle:'medium'});
+  const timeStr=new Date(d.registeredAt).toLocaleString('en-IN',{timeZone:'Asia/Kolkata',dateStyle:'medium',timeStyle:'medium'});
+  document.getElementById('time').textContent=timeStr;
   new QRCode(document.getElementById('qr'), { text: d.regNo, width: 150, height: 150 });
+
+  document.getElementById('slipName').textContent=d.name;
+  document.getElementById('slipRegNo').textContent=d.regNo;
+  document.getElementById('slipTime').textContent=timeStr;
+  new QRCode(document.getElementById('slipQr'), { text: d.regNo, width: 130, height: 130 });
+
+  document.getElementById('printBtn').addEventListener('click', ()=>window.print());
 }
 </script></body></html>
