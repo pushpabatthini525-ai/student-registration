@@ -1,41 +1,85 @@
 <!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1"><title>Admin Dashboard</title>
-<link rel="stylesheet" href="style.css"></head><body>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+.topbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+.btn2{border:0;border-radius:6px;padding:9px 16px;font-size:.85rem;font-weight:600;cursor:pointer;color:#fff}
+.btn2.export{background:#154d40}
+.btn2.bulk{background:#1f6f5c}
+.btn2.bulk:disabled{background:#9fb8b2;cursor:not-allowed}
+.chk{width:16px;height:16px;cursor:pointer}
+.bulkbar{display:none;align-items:center;gap:10px;margin-bottom:10px;padding:10px 14px;background:#1f6f5c14;border:1px solid var(--accent);border-radius:8px;font-size:.85rem}
+.bulkbar.show{display:flex}
+</style>
+</head><body>
 <nav><span class="navtxt">Admin Dashboard</span><a href="#" id="logout">Logout</a></nav>
-<div class="wrap huge"><h1>All Registrations</h1>
+<div class="wrap huge">
+<div class="topbar">
+  <h1 style="margin:0">All Registrations</h1>
+  <button class="btn2 export" id="exportBtn">⬇ Export to Excel</button>
+</div>
 <div class="stats" id="stats"></div>
 <div class="tools">
   <input id="q" placeholder="Search name, reg no, email, mobile, place...">
   <select id="flt"><option value="">All</option><option>Pending</option><option>Approved</option><option>Rejected</option></select>
 </div>
+<div class="bulkbar" id="bulkbar">
+  <span id="bulkCount">0 selected</span>
+  <button class="btn2 bulk" id="bulkApprove">Approve Selected</button>
+  <button class="btn2 bulk" id="bulkReject" style="background:#a1372c">Reject Selected</button>
+</div>
 <div class="card scroll"><table>
-<thead><tr><th>#</th><th>Name</th><th>Reg No</th><th>DOB</th><th>Father</th><th>Mother</th><th>Student Mob</th><th>Parent Mob</th><th>Place</th><th>Email</th><th>Registered</th><th>Status</th><th>Action</th></tr></thead>
+<thead><tr><th><input type="checkbox" class="chk" id="selectAll"></th><th>#</th><th>Name</th><th>Reg No</th><th>DOB</th><th>Father</th><th>Mother</th><th>Student Mob</th><th>Parent Mob</th><th>Place</th><th>Email</th><th>Registered</th><th>Status</th><th>Action</th></tr></thead>
 <tbody id="rows"></tbody></table></div></div>
 <script>
 const $=id=>document.getElementById(id);
 const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const fmt=iso=>new Date(iso).toLocaleString('en-IN',{timeZone:'Asia/Kolkata',dateStyle:'medium',timeStyle:'short'});
-let all=[];
+let all=[], selected=new Set();
 
 async function load(){
   const r=await fetch('/api/admin/registrations');
   if(r.status===401){location.href='admin-login.html';return;}
   all=await r.json();render();
 }
-function render(){
+function currentList(){
   const q=$('q').value.toLowerCase(), f=$('flt').value;
+  return all.filter(x=>(!f||x.status===f)&&(!q||[x.full_name,x.reg_no,x.email,x.current_place,x.student_mobile,x.parent_mobile].join(' ').toLowerCase().includes(q)));
+}
+function render(){
   const c=s=>all.filter(x=>x.status===s).length;
   $('stats').innerHTML='Total: <b>'+all.length+'</b> &nbsp;|&nbsp; Pending: <b>'+c('Pending')+'</b> &nbsp;|&nbsp; Approved: <b>'+c('Approved')+'</b> &nbsp;|&nbsp; Rejected: <b>'+c('Rejected')+'</b>';
-  const list=all.filter(x=>(!f||x.status===f)&&(!q||[x.full_name,x.reg_no,x.email,x.current_place,x.student_mobile,x.parent_mobile].join(' ').toLowerCase().includes(q)));
+  const list=currentList();
   $('rows').innerHTML=list.length?list.map((s,i)=>
-    '<tr><td>'+(i+1)+'</td><td>'+esc(s.full_name)+'</td><td>'+esc(s.reg_no)+'</td><td>'+esc(String(s.dob).slice(0,10))+
+    '<tr><td><input type="checkbox" class="chk rowChk" data-id="'+s.id+'" '+(selected.has(s.id)?'checked':'')+'></td><td>'+(i+1)+'</td><td>'+esc(s.full_name)+'</td><td>'+esc(s.reg_no)+'</td><td>'+esc(String(s.dob).slice(0,10))+
     '</td><td>'+esc(s.father_name)+'</td><td>'+esc(s.mother_name)+'</td><td>'+esc(s.student_mobile)+'</td><td>'+esc(s.parent_mobile)+
     '</td><td>'+esc(s.current_place)+'</td><td>'+esc(s.email)+'</td><td>'+fmt(s.registered_at)+
     '</td><td><span class="badge '+s.status+'">'+s.status+'</span>'+(s.reject_reason?'<div class="rs">'+esc(s.reject_reason)+'</div>':'')+
     '</td><td class="act"><button class="btn-sm ok" onclick="setStatus('+s.id+',\'Approved\')">Approve</button> '+
     '<button class="btn-sm no" onclick="setStatus('+s.id+',\'Rejected\')">Reject</button></td></tr>').join('')
-    :'<tr><td colspan="13">No records.</td></tr>';
+    :'<tr><td colspan="14">No records.</td></tr>';
+  document.querySelectorAll('.rowChk').forEach(cb=>cb.addEventListener('change',onRowCheck));
+  updateBulkBar();
 }
+function onRowCheck(e){
+  const id=Number(e.target.dataset.id);
+  if(e.target.checked) selected.add(id); else selected.delete(id);
+  updateBulkBar();
+}
+function updateBulkBar(){
+  $('bulkCount').textContent=selected.size+' selected';
+  $('bulkbar').classList.toggle('show',selected.size>0);
+  $('bulkApprove').disabled=selected.size===0;
+  $('bulkReject').disabled=selected.size===0;
+}
+$('selectAll').addEventListener('change',e=>{
+  const list=currentList();
+  if(e.target.checked) list.forEach(s=>selected.add(s.id));
+  else list.forEach(s=>selected.delete(s.id));
+  render();
+});
+
 async function setStatus(id,status){
   let reason='';
   if(status==='Rejected'){reason=prompt('Reason for rejection:');if(!reason||!reason.trim())return;}
@@ -43,6 +87,38 @@ async function setStatus(id,status){
   const r=await fetch('/api/admin/status',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id,status,reason})});
   if(r.ok)load();else alert((await r.json()).error||'Failed');
 }
+
+async function bulkSetStatus(status){
+  if(selected.size===0)return;
+  let reason='';
+  if(status==='Rejected'){reason=prompt('Reason for rejection (applies to all selected):');if(!reason||!reason.trim())return;}
+  else if(!confirm('Approve '+selected.size+' selected student(s)? Emails will be sent.'))return;
+  const ids=[...selected];
+  for(const id of ids){
+    await fetch('/api/admin/status',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id,status,reason})});
+  }
+  selected.clear();
+  load();
+}
+$('bulkApprove').addEventListener('click',()=>bulkSetStatus('Approved'));
+$('bulkReject').addEventListener('click',()=>bulkSetStatus('Rejected'));
+
+$('exportBtn').addEventListener('click',()=>{
+  const list=currentList();
+  if(!list.length){alert('No records to export.');return;}
+  const rows=list.map(s=>({
+    'Reg No': s.reg_no, 'Full Name': s.full_name, 'DOB': String(s.dob).slice(0,10),
+    "Father's Name": s.father_name, "Mother's Name": s.mother_name,
+    'Student Mobile': s.student_mobile, 'Parent Mobile': s.parent_mobile,
+    'Current Place': s.current_place, 'Email': s.email, 'Status': s.status,
+    'Rejection Reason': s.reject_reason||'', 'Registered At': fmt(s.registered_at),
+  }));
+  const ws=XLSX.utils.json_to_sheet(rows);
+  const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,ws,'Registrations');
+  XLSX.writeFile(wb,'registrations_'+new Date().toISOString().slice(0,10)+'.xlsx');
+});
+
 $('q').addEventListener('input',render);
 $('flt').addEventListener('change',render);
 $('logout').addEventListener('click',async e=>{

@@ -1,9 +1,18 @@
 <!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1"><title>Registration Successful</title>
-<link rel="stylesheet" href="style.css"></head><body>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+.qrbox{display:flex;justify-content:center;margin:18px 0}
+.qrbox canvas,.qrbox img{border:8px solid #fff;border-radius:8px;box-shadow:0 2px 10px rgba(0,0,0,.1)}
+.qrcap{text-align:center;font-size:.78rem;opacity:.65;margin-top:-10px;margin-bottom:14px}
+</style>
+</head><body>
 <nav><a href="index.html">Register</a><a href="student-login.html">Student Login</a><a href="registered.html">Registered Students</a></nav>
 <div class="wrap"><div class="card">
 <div class="ok">&#10004; You have successfully registered!</div>
+<div id="qr" class="qrbox"></div>
+<div class="qrcap">Scan or show this QR at the admission desk</div>
 <div class="row"><span>Name</span><b id="name"></b></div>
 <div class="row"><span>Registration Number</span><b id="regNo"></b></div>
 <div class="row"><span>Password</span><b id="pw"></b></div>
@@ -20,5 +29,6 @@ else{
   document.getElementById('regNo').textContent=d.regNo;
   document.getElementById('pw').textContent=d.password;
   document.getElementById('time').textContent=new Date(d.registeredAt).toLocaleString('en-IN',{timeZone:'Asia/Kolkata',dateStyle:'medium',timeStyle:'medium'});
+  new QRCode(document.getElementById('qr'), { text: d.regNo, width: 150, height: 150 });
 }
 </script></body></html>
