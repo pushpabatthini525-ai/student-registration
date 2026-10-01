@@ -1,8 +1,10 @@
 :root{--ink:#152238;--bg:#f3f1ea;--card:#fff;--accent:#1f6f5c;--accent-dark:#154d40;--line:#d8d3c4;--bad:#a1372c}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:"Segoe UI",Arial,sans-serif}
-nav{background:var(--accent);padding:12px 18px;display:flex;gap:18px;justify-content:center;flex-wrap:wrap}
-nav a{color:#fff;text-decoration:none;font-weight:600;font-size:.95rem}
+nav{background:var(--accent);padding:12px 18px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+nav a{color:#fff;text-decoration:none;font-weight:600;font-size:.85rem;
+  padding:8px 16px;border:1.5px solid #ffffff55;border-radius:8px;transition:.15s;white-space:nowrap}
+nav a:hover,nav a:active{background:#ffffff22;border-color:#fff}
 .navtxt{color:#fff;font-weight:700}
 .wrap{max-width:560px;margin:0 auto;padding:24px 16px 50px}
 .wide{max-width:900px}

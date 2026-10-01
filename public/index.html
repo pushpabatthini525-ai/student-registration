@@ -19,9 +19,10 @@ body{min-height:100vh;display:grid;grid-template-columns:1fr 1.35fr;font-family:
 .pts div{display:flex;align-items:center;gap:10px;opacity:.9}
 .pts b{width:22px;height:22px;border-radius:50%;background:#ffffff26;display:grid;place-items:center;font-size:.75rem}
 .panel{padding:26px 48px 50px;display:flex;flex-direction:column}
-.top{display:flex;justify-content:flex-end;gap:18px;margin-bottom:18px;font-size:.88rem;flex-wrap:wrap}
-.top a{color:var(--g2);text-decoration:none;font-weight:600}
-.top a:hover{text-decoration:underline}
+.top{display:flex;justify-content:flex-end;gap:10px;margin-bottom:18px;font-size:.85rem;flex-wrap:wrap}
+.top a{color:var(--g2);text-decoration:none;font-weight:600;padding:9px 16px;
+  border:1.5px solid var(--g2);border-radius:8px;transition:.15s;white-space:nowrap}
+.top a:hover,.top a:active{background:var(--g2);color:#fff}
 .box{width:100%;max-width:640px;margin:0 auto}
 .box h2{font-size:1.7rem;margin-bottom:6px}
 .sub{color:var(--muted);margin-bottom:24px;font-size:.95rem}
@@ -72,7 +73,7 @@ input:focus{outline:0;border-color:var(--g2);background:#fff;box-shadow:0 0 0 4p
 </section>
 
 <main class="panel">
-  <div class="top"><a href="student-login.html">Student Login</a><a href="registered.html">Registered Students</a><a href="admin-login.html">Admin Login</a></div>
+  <div class="top"><a href="home.html">Home</a><a href="student-login.html">Student Login</a><a href="registered.html">Registered Students</a><a href="admin-login.html">Admin Login</a></div>
   <div class="box">
     <h2>Create your registration</h2>
     <p class="sub">Fields marked <span style="color:var(--bad)">*</span> are mandatory.</p>
