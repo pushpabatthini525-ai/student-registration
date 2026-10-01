@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Student Registration Portal</title>
+<style>
+*{box-sizing:border-box;margin:0}
+:root{--g1:#0b2e26;--g2:#1f6f5c;--ink:#14213d;--muted:#6b7280;--line:#dfe3e8}
+body{min-height:100vh;font-family:"Segoe UI",Roboto,Arial,sans-serif;color:var(--ink);
+  background:linear-gradient(145deg,var(--g1),var(--g2));
+  display:flex;align-items:center;justify-content:center;padding:24px;overflow-x:hidden;position:relative}
+body::before,body::after{content:"";position:absolute;border-radius:50%;border:1px solid #ffffff20}
+body::before{width:560px;height:560px;right:-200px;top:-220px;box-shadow:0 0 0 60px #ffffff0a,0 0 0 120px #ffffff06}
+body::after{width:380px;height:380px;left:-140px;bottom:-160px;box-shadow:0 0 0 50px #ffffff0a}
+
+.card{position:relative;z-index:1;background:#fff;border-radius:18px;max-width:760px;width:100%;
+  padding:46px 40px;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+.logo{display:flex;align-items:center;gap:12px;margin-bottom:26px}
+.logo span{width:46px;height:46px;border-radius:12px;background:var(--g2);color:#fff;
+  display:grid;place-items:center;font-size:1.3rem}
+.logo b{font-weight:700;letter-spacing:.3px}
+h1{font-family:Georgia,"Times New Roman",serif;font-size:2rem;line-height:1.25;margin-bottom:10px}
+.sub{color:var(--muted);margin-bottom:34px;font-size:1rem;line-height:1.6;max-width:560px}
+
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.tile{display:flex;align-items:center;gap:14px;padding:20px;border:1.5px solid var(--line);
+  border-radius:12px;text-decoration:none;color:var(--ink);transition:.15s;background:#fafbfc}
+.tile:hover{border-color:var(--g2);background:#1f6f5c0d;transform:translateY(-2px)}
+.tile .ic{width:44px;height:44px;border-radius:10px;display:grid;place-items:center;
+  font-size:1.2rem;flex-shrink:0;color:#fff}
+.tile.reg .ic{background:var(--g2)}
+.tile.stu .ic{background:#2a6fb0}
+.tile.list .ic{background:#b08a2a}
+.tile.admin .ic{background:#6b3fa0}
+.tile .t{font-weight:700;font-size:.98rem;margin-bottom:3px}
+.tile .d{font-size:.8rem;color:var(--muted);line-height:1.4}
+
+.foot{margin-top:30px;text-align:center;font-size:.78rem;color:var(--muted)}
+
+@media(max-width:560px){
+  .grid{grid-template-columns:1fr}
+  .card{padding:32px 24px}
+  h1{font-size:1.5rem}
+}
+</style></head><body>
+
+<div class="card">
+  <div class="logo"><span>&#127891;</span><b>Student Registration Portal</b></div>
+  <h1>Welcome</h1>
+  <p class="sub">Register in under two minutes, check your status anytime, or manage registrations as an admin — all in one place.</p>
+
+  <div class="grid">
+    <a class="tile reg" href="index.html">
+      <div class="ic">&#128221;</div>
+      <div><div class="t">New Registration</div><div class="d">Fill the form and get your Reg No instantly</div></div>
+    </a>
+    <a class="tile stu" href="student-login.html">
+      <div class="ic">&#128100;</div>
+      <div><div class="t">Student Login</div><div class="d">Check your application status</div></div>
+    </a>
+    <a class="tile list" href="registered.html">
+      <div class="ic">&#128196;</div>
+      <div><div class="t">Registered Students</div><div class="d">See how many have registered</div></div>
+    </a>
+    <a class="tile admin" href="admin-login.html">
+      <div class="ic">&#128274;</div>
+      <div><div class="t">Admin Login</div><div class="d">Review and approve applications</div></div>
+    </a>
+  </div>
+
+  <div class="foot">Authorized use only &middot; One registration per email</div>
+</div>
+</body></html>
